@@ -11,17 +11,17 @@ new-game returns a fn that takes a keyword as argument.
 ```
 
 ### Some GETTERS...
-Return the players of the game
+Return a collection of maps representing players of the game. Such a map contains :name (string) :hand (coll), :revealed (coll)
 ```clojure
 ((game :players))
 ```
 
-Return the hand of the current player
+Return the hand of the current player, should be empty at the start of a new game.
 ```clojure
 ((game :hand))
 ```
 
-Return the wall of Mahjong-tiles
+Return the wall of Mahjong-tiles. Tiles are represented as a keyword, e.g. :b1 represents 1 of bamboos, :dg represents green dragon, :wn represents northern wind.
 ```clojure
 ((game :wall))
 ```
