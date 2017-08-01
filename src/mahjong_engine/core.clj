@@ -1,5 +1,8 @@
 (ns mahjong-engine.core)
 
+; TODO: Update comments & docstrings
+; TODO: Update todo-list ;-)
+
 (defn tiles []
  (reduce concat (map (fn [s c] (map keyword (map str (repeat s) c)))
                  ['b 'c 's 'd 'w]
