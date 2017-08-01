@@ -4,67 +4,72 @@ A Clojure library implementing a simple Mahjong game-engine.
 
 ## Usage
 
+### Require the library in the repl
+```clojure
+(require '[mahjong-engine.core :as m])
+```
+
 ### Creating a new game
 new-game returns a fn that takes a keyword as argument.
 ```clojure
-(def game (new-game))
+(def game (m/new-game))
 ```
 
 ### Some GETTERS...
 Return a collection of maps representing players of the game. Such a map contains :name (string) :hand (coll), :revealed (coll)
 ```clojure
-((game :players))
+((m/game :players))
 ```
 
 Return the hand of the current player, should be empty at the start of a new game.
 ```clojure
-((game :hand))
+((m/game :hand))
 ```
 
 Return the wall of Mahjong-tiles. Tiles are represented as a keyword, e.g. :b1 represents 1 of bamboos, :dg represents green dragon, :wn represents northern wind.
 ```clojure
-((game :wall))
+((m/game :wall))
 ```
 
 Return a frequency-map of the discarded-tiles
 ```clojure
-((game :discard-pile))
+((m/game :discard-pile))
 ```
 
 ### Some SETTERS...
 Update the game -> Draw 14 tiles to the hand of the current player
 ```clojure
-((game :draw-tiles) 14)
+((m/game :draw-tiles) 14)
 ```
 
 Update the game -> Discard a tile (requires user input!)
 ```clojure
-((game :discard-tile) (first ((game :hand))))
+((m/game :discard-tile) (first ((m/game :hand))))
 ```
 
 Update the game -> Rotate the players (next player's turn)
 ```clojure
-((game :rotate-players))
+((m/game :rotate-players))
 ```
 
 Let's say current player has already 13 tiles in is hand
 ```clojure
-((game :draw-tiles) 13)
+((m/game :draw-tiles) 13)
 ```
 
 Usually you'd draw a tile at the beginning of a turn
 ```clojure
-((game :draw-tile))
+((m/game :draw-tile))
 ```
 
-Inspect player's hand
+Return current player's hand
 ```clojure
-((game :hand))
+((m/game :hand))
 ```
 
 Discard a tile
 ```clojure
-((game :discard-tile) (first ((game :hand))))
+((m/game :discard-tile) (first ((m/game :hand))))
 ```
 
 ### More to come!
