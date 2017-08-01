@@ -1,6 +1,9 @@
 (ns mahjong-engine.core)
 
-; TODO: Update todo-list ;-)
+; TODO: Implement a scoring system & notion of chows, pungs and kongs.
+; TODO: Implement generic interaction fnunctions (inform / prompt) for ui
+; TODO: Implement claiming of a discarded tile.
+; TODO: Implement the execution of a round
 
 ; tiles [] => Returns a collection of all base-tiles of the mahjong game. A tile is represented by a 2-char keyword, the first char describes the suit (b for bamboo, w for wind f.e.) and the second char describes the rank (1 for one, n for north f.e.)
 (defn tiles
