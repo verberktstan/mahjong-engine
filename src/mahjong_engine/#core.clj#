@@ -1,6 +1,5 @@
 (ns mahjong-engine.core)
 
-; TODO: Supply names for the anonymous functions (for backtracke clarity)
 ; TODO: Implement a scoring system & notion of chows, pungs and kongs.
 ; TODO: Implement generic interaction fnunctions (inform / prompt) for ui
 ; TODO: Implement claiming of a discarded tile.
@@ -8,7 +7,7 @@
 
 ; make-interactions [inform-fn request-fn] => Returns a function that accepts a keyword. Abstraction of user interaction.
 (defn make-interactions [inform-fn request-fn]
- (fn make-interactions [k]
+ (fn [k]
   (let [functionality {:inform (fn [x] (inform-fn x))
                        :request (fn [x] (let [input (do
                                                      (inform-fn x)
@@ -22,7 +21,7 @@
 (defn tiles
  "Returns a collection of all the base-tiles of the Mahjong game. Tiles are represented as keywords."
  []
- (reduce concat (map (fn compose-tile [s c] (map keyword (map str (repeat s) c)))
+ (reduce concat (map (fn [s c] (map keyword (map str (repeat s) c)))
                  ['b 'c 's 'd 'w]
                  [(range 1 10) (range 1 10) (range 1 10) ['g 'r 'w] ['e 'n 's 'w]])))
 
@@ -82,15 +81,15 @@
  "Returns a fn with a closure around a map representing a game. The returned function accepts one arg (k) which should be a keyword. It returns the function matching with the keyword."
  []
  (let [g (atom {:wall (new-wall) :players (new-players) :discard nil})]
-  (fn new-game [k]
+  (fn [k]
    "Things you can do"
    (k {; GETTERS
-       :players (fn game-get-players [] (:players @g)),
-       :hand (fn game-get-hand [] (:hand (first (:players @g)))),
-       :wall (fn game-get-wall [] (:wall @g)),
-       :discard-pile (fn game-get-discard-pile [] (sort (frequencies (:discard @g)))), ; sort the discard-pile for better view
+       :players (fn [] (:players @g)),
+       :hand (fn [] (:hand (first (:players @g)))),
+       :wall (fn [] (:wall @g)),
+       :discard-pile (fn [] (sort (frequencies (:discard @g)))), ; sort the discard-pile for better view
        ; SETTERS
-       :draw-tile (fn game-draw-tile [] (swap! g (partial draw-tiles 1))),
-       :draw-tiles (fn game-draw-tiles [n] (swap! g (partial draw-tiles n))),
-       :discard-tile (fn game-discard-tile [t] (swap! g (partial discard-tile t)))
-       :rotate-players (fn game-rotate-players [] (swap! g (partial rotate-players)))}))))
+       :draw-tile (fn [] (swap! g (partial draw-tiles 1))),
+       :draw-tiles (fn [n] (swap! g (partial draw-tiles n))),
+       :discard-tile (fn [t] (swap! g (partial discard-tile t)))
+       :rotate-players (fn [] (swap! g (partial rotate-players)))}))))
