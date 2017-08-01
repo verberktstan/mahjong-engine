@@ -5,6 +5,18 @@
 ; TODO: Implement claiming of a discarded tile.
 ; TODO: Implement the execution of a round
 
+; make-interactions [inform-fn request-fn] => Returns a function that accepts a keyword. Abstraction of user interaction.
+(defn make-interactions [inform-fn request-fn]
+ (fn [k]
+  (let [functionality {:inform (fn [x] (inform-fn x))
+                       :request (fn [x] (let [input (do
+                                                     (inform-fn x)
+                                                     (request-fn))]
+                                         input))}]
+   ((keyword k) functionality))))
+; Create a function to interact with the user.
+(def interact (make-interactions println read-line))
+
 ; tiles [] => Returns a collection of all base-tiles of the mahjong game. A tile is represented by a 2-char keyword, the first char describes the suit (b for bamboo, w for wind f.e.) and the second char describes the rank (1 for one, n for north f.e.)
 (defn tiles
  "Returns a collection of all the base-tiles of the Mahjong game. Tiles are represented as keywords."
