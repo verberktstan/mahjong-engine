@@ -22,7 +22,7 @@
  (let [p {:name nil :hand nil :revealed nil}]
   (map
    (partial assoc p :name)
-   (list "Bert" "Ernie" "Corinne" "Stan"))))
+   (list "Aart" "Bert" "Ernie" "Pino"))))
 
 ; draw-tile [n g] => Returns map g with n tiles moved from the wall to the hand of the first-player.
 (defn draw-tiles [n g]
