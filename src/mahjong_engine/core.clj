@@ -51,6 +51,15 @@
         rank (if (char-is-number? c) (- (int c) 48) c)]
    (get rank-coll rank nil))))
 
+; make-same-suit?-fn [tile-def-map] => Given a tile definition map, returns a fn that returns true if all the tiles supplied are of the same suit.
+(defn make-same-suit?-fn
+ "Given a tile definition map, returns a fn that returns true if all the tiles supplied are of the same suit."
+ [tile-def-map]
+ (let [get-suit (make-get-suit-fn tile-def-map)]
+  (fn same-suit? [& tiles]
+   (let [[& suits] (map get-suit tiles)] ; Get suits for all the supplied tiles
+    (apply = suits)))))
+
 ; make-interactions [inform-fn request-fn] => Returns a function that accepts a keyword. Abstraction of user interaction.
 (defn make-interactions [inform-fn request-fn]
  (fn make-interactions [k]
