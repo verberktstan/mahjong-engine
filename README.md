@@ -6,7 +6,7 @@ A Clojure library implementing a simple Mahjong game-engine.
 
 ; Creating a new game
 ; new-game returns a fn that takes a keyword as argument.
-(def game (new-game))
+> (def game (new-game))
 
 ; Some GETTERS...
 ; Return the players of the game
