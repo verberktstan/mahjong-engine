@@ -58,7 +58,7 @@
                     (rest (:players g))
                     (assoc player :hand new-hand))]
   (assoc g
-   :discard (conj discard-pile t)
+   :discard (conj discard-pile t) ; is there a need to sort here?
    :players new-players)))
 
 ; new-game [] => Returns a map with a closure around it that refs to the newly created game.
@@ -72,7 +72,7 @@
        :players (fn [] (:players @g)),
        :hand (fn [] (:hand (first (:players @g)))),
        :wall (fn [] (:wall @g)),
-       :discard-pile (fn [] (frequencies (:discard @g))),
+       :discard-pile (fn [] (sort (frequencies (:discard @g)))), ; sort the discard-pile for better view
        ; SETTERS
        :draw-tile (fn [] (swap! g (partial draw-tiles 1))),
        :draw-tiles (fn [n] (swap! g (partial draw-tiles n))),
