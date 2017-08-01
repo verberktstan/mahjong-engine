@@ -1,10 +1,55 @@
 (ns mahjong-engine.core)
 
-; TODO: Supply names for the anonymous functions (for backtracke clarity)
+; TODO: Implement a fn that returns all the close tiles in hand (same suit, within chow range for standard suits)
 ; TODO: Implement a scoring system & notion of chows, pungs and kongs.
-; TODO: Implement generic interaction fnunctions (inform / prompt) for ui
-; TODO: Implement claiming of a discarded tile.
+; TODO: Implement generic interaction functions (inform / prompt) for ui
+; TODO: Implement claiming of a discarded tile => Reveal a set
 ; TODO: Implement the execution of a round
+; TODO: Separate functions into different namespaces/files
+
+; Definition of available tiles. Can be used as argument to make-get-suit-fn and make-get-rank-fn. It should be possible (in the future) to supply different tile definition sets for a new game.
+(def tile-definitions
+ {:b {:suit "bamboo"
+      :ranks (apply hash-map
+              (apply interleave (repeat 2 (range 1 10))))}
+  :c {:suit "circle"
+      :ranks (apply hash-map
+              (apply interleave (repeat 2 (range 1 10))))}
+  :d {:suit "dragon"
+      :ranks (apply hash-map
+              (interleave [\g \r \w] ["green" "red" "white"]))}
+  :s {:suit "sign"
+      :ranks (apply hash-map
+              (apply interleave (repeat 2 (range 1 10))))}
+  :w {:suit "wind"
+      :ranks (apply hash-map
+              (interleave [\e \n \s \w] ["east" "north" "south" "west"]))}})
+
+(defn char-is-number?
+ "Returns true if the char is a number."
+ [c]
+ (let [i (int c)]
+  (and (>= i 48) (< i 58))))
+
+; make-get-suit-fn [tile-def-map] => Given a tile definition map, returns a fn that retrieves the suit of tile.
+(defn make-get-suit-fn
+ "Given a tile definition map, returns a fn that retrieves the suit of tile."
+ [tile-def-map]
+ (fn get-suit [tile]
+  (:suit
+   (get tile-def-map
+    (keyword (str (first (name tile))))
+    nil))))
+
+; make-get-rank-fn [tile-def-map] => Given a tile definition map, returns a fn that retrieves the rank of tile.
+(defn make-get-rank-fn
+ "Given a tile definition map, returns a fn that retrieves the rank of tile."
+ [tile-def-map]
+ (fn get-rank [tile]
+  (let [rank-coll (:ranks (get tile-def-map (keyword (str (first (name tile)))) nil))
+        c (second (name tile))
+        rank (if (char-is-number? c) (- (int c) 48) c)]
+   (get rank-coll rank nil))))
 
 ; make-interactions [inform-fn request-fn] => Returns a function that accepts a keyword. Abstraction of user interaction.
 (defn make-interactions [inform-fn request-fn]
@@ -16,7 +61,7 @@
                                          input))}]
    ((keyword k) functionality))))
 ; Create a function to interact with the user.
-(def interact (make-interactions println read-line))
+;(def interact (make-interactions println read-line)) ; Call it when creating a new game?
 
 ; tiles [] => Returns a collection of all base-tiles of the mahjong game. A tile is represented by a 2-char keyword, the first char describes the suit (b for bamboo, w for wind f.e.) and the second char describes the rank (1 for one, n for north f.e.)
 (defn tiles
