@@ -10,12 +10,6 @@
 ; TODO: Implement the execution of a round
 ; TODO: Separate functions into different namespaces/files
 
-(defn char-is-number?
- "Returns true if the char is a number."
- [c]
- (let [i (int c)]
-  (and (>= i 48) (< i 58))))
-
 ; Sorting tiles by name first, and value second.
 (def sort-tiles (partial sort-by (juxt :name :value)))
 
