@@ -10,6 +10,41 @@
 ; TODO: Implement the execution of a round
 ; TODO: Separate functions into different namespaces/files
 
+(defn char-is-number?
+ "Returns true if the char is a number."
+ [c]
+ (let [i (int c)]
+  (and (>= i 48) (< i 58))))
+
+; Sorting tiles by name first, and value second.
+(def sort-tiles (partial sort-by (juxt :name :value)))
+
+; make-interactions [inform-fn request-fn] => Returns a function that accepts a keyword. Abstraction of user interaction.
+(defn make-interactions [inform-fn request-fn]
+ (fn make-interactions [k]
+  (let [functionality {:inform (fn [x] (inform-fn x))
+                       :request (fn [x] (let [input (do
+                                                     (inform-fn x)
+                                                     (request-fn))]
+                                         input))}]
+   ((keyword k) functionality))))
+; Create a function to interact with the user.
+;(def interact (make-interactions println read-line)) ; Call it when creating a new game?
+
+; tiles [] => Returns a collection of all base-tiles of the mahjong game. A tile is represented by a 2-char keyword, the first char describes the suit (b for bamboo, w for wind f.e.) and the second char describes the rank (1 for one, n for north f.e.)
+(defn tiles
+ "Returns a collection of tiles with name tile-name. (tile-name :bamboo) => list of all bamboos etc."
+ [tile-name]
+ (let [c (get {:dragon ["green" "red" "white"]
+               :wind ["east" "north" "south" "west"]
+               :season ["spring" "summer" "autumn" "fall"]
+               :flower ["bamboo" "chrysantemum" "orchid" "plumb"]}
+          (keyword tile-name)
+          (range 1 10))]
+  (map
+   (partial assoc {:name (name tile-name)} :value)
+   c)))
+
 ; Should probably convert this to a smart regex match sometime... Also this is not needed in the core lib.
 (defn guess-tile
  [input]
@@ -54,40 +89,6 @@
         (let [t {:name n :value v}
               all-tiles (tiles n)]
          (first (filter (partial = t) all-tiles))))))
-
-(defn char-is-number?
- "Returns true if the char is a number."
- [c]
- (let [i (int c)]
-  (and (>= i 48) (< i 58))))
-
-(def sort-tiles (partial sort-by (juxt :name :value)))
-
-; make-interactions [inform-fn request-fn] => Returns a function that accepts a keyword. Abstraction of user interaction.
-(defn make-interactions [inform-fn request-fn]
- (fn make-interactions [k]
-  (let [functionality {:inform (fn [x] (inform-fn x))
-                       :request (fn [x] (let [input (do
-                                                     (inform-fn x)
-                                                     (request-fn))]
-                                         input))}]
-   ((keyword k) functionality))))
-; Create a function to interact with the user.
-;(def interact (make-interactions println read-line)) ; Call it when creating a new game?
-
-; tiles [] => Returns a collection of all base-tiles of the mahjong game. A tile is represented by a 2-char keyword, the first char describes the suit (b for bamboo, w for wind f.e.) and the second char describes the rank (1 for one, n for north f.e.)
-(defn tiles
- "Returns a collection of tiles with name tile-name. (tile-name :bamboo) => list of all bamboos etc."
- [tile-name]
- (let [c (get {:dragon ["green" "red" "white"]
-               :wind ["east" "north" "south" "west"]
-               :season ["spring" "summer" "autumn" "fall"]
-               :flower ["bamboo" "chrysantemum" "orchid" "plumb"]}
-          (keyword tile-name)
-          (range 1 10))]
-  (map
-   (partial assoc {:name (name tile-name)} :value)
-   c)))
 
 ; new-wall [] => Returns a shuffled collection of tiles, representing a wall of Mahjong-tiles.
 (defn new-wall
