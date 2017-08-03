@@ -2,10 +2,9 @@
  (:require [mahjong-engine.tiles :refer :all]
   [mahjong-engine.special-moves :refer :all]))
 
-; TODO: Implement a scoring system & notion of chows.
-; TODO: Implement generic interaction functions (inform / prompt) for ui
-; TODO: Implement claiming of a discarded tile => Reveal a set
-; TODO: Implement the execution of a round
+; TODO: Implement a scoring system.
+; TODO: Implement special moves.
+; TODO: Implement the execution of a round?
 
 (defn new-players
  "Retuns a collection of maps representing players."

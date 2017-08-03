@@ -18,13 +18,22 @@
  [& tiles]
  (is-matching-set? tiles 3))
 
-(defn is-sequential-set?
+(defn is-sequential?
  "Returns true if each element in coll matches the inc of the previous one. It DOES NOT sort coll. e.g. (is-sequential-set? '(1 2 3)) => true"
- [coll sequential-fn]
+ [coll]
  (reduce
-   (fn [last next]
-     (when last
-       (if (not= next (sequential-fn last))
+   (fn [prev next]
+     (when (not (false? prev))
+       (if (not= next (inc prev))
          false
          next)))
-   tiles))
+   coll))
+
+(defn is-chow?
+ "Returns logical true (value of the last tile in this case) if exactly 3 sequential suited (so no bonustiles!) tiles are given. Sorts tiles automatically so don't worry about the order."
+ [& tiles]
+ (let [sorted-tiles (sort-tiles tiles)]
+  (when (= (count sorted-tiles) 3) ; 3 tiles?
+   (when (apply = (map :name sorted-tiles)) ; Do they have the same name?
+    (when (number? (get (first sorted-tiles) :value)) ; Are they suited tiles, have a number as value?
+          (is-sequential? (map :value sorted-tiles)))))))
