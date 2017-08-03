@@ -48,14 +48,21 @@
                     (rest (:players g))
                     (assoc player :hand new-hand))]
   (assoc g
-   :discard (conj discard-pile t) ; is there a need to sort here?
+   :discard (conj discard-pile t)
+   :last-discarded t ; keep the last discarded tile in a special place
    :players new-players)))
+
+(defn check-special-moves
+ [game]
+ (do (println "Joehoe")
+  (map (partial can-claim-tile? (:last-discarded game)) (:players game))))
+
 
 ; new-game [] => Returns a map with a closure around it that refs to the newly created game.
 (defn new-game
            "Returns a fn with a closure around a map representing a game. The returned function accepts one arg (k) which should be a keyword. It returns the function matching with the keyword."
            []
-           (let [g (atom {:wall (new-wall) :players (new-players) :discard nil})]
+           (let [g (atom {:wall (new-wall) :players (new-players) :discard nil :last-discarded nil})]
             (fn new-game [k]
              "Things you can do"
              (k {; GETTERS
@@ -63,11 +70,13 @@
                  :hand (fn game-get-hand [] (:hand (first (:players @g)))),
                  :wall (fn game-get-wall [] (:wall @g)),
                  :discard-pile (fn game-get-discard-pile [] (sort (frequencies (:discard @g)))), ; sort the discard-pile for better view
+                 :special-moves (fn game-special-moves [] (check-special-moves @g))
        ; SETTERS
                  :draw-tile (fn game-draw-tile [] (swap! g (partial draw-tiles 1))),
                  :draw-tiles (fn game-draw-tiles [n] (swap! g (partial draw-tiles n))),
                  :discard-tile (fn game-discard-tile [t] (swap! g (partial discard-tile t))),
                  :rotate-players (fn game-rotate-players [] (swap! g (partial rotate-players)))}))))
+
 
 (defn draw-hands
  [game]
