@@ -13,18 +13,6 @@
 ; Sorting tiles by name first, and value second.
 (def sort-tiles (partial sort-by (juxt :name :value)))
 
-; make-interactions [inform-fn request-fn] => Returns a function that accepts a keyword. Abstraction of user interaction.
-(defn make-interactions [inform-fn request-fn]
- (fn make-interactions [k]
-  (let [functionality {:inform (fn [x] (inform-fn x))
-                       :request (fn [x] (let [input (do
-                                                     (inform-fn x)
-                                                     (request-fn))]
-                                         input))}]
-   ((keyword k) functionality))))
-; Create a function to interact with the user.
-;(def interact (make-interactions println read-line)) ; Call it when creating a new game?
-
 ; tiles [] => Returns a collection of all base-tiles of the mahjong game. A tile is represented by a 2-char keyword, the first char describes the suit (b for bamboo, w for wind f.e.) and the second char describes the rank (1 for one, n for north f.e.)
 (defn tiles
  "Returns a collection of tiles with name tile-name. (tile-name :bamboo) => list of all bamboos etc."
@@ -38,51 +26,6 @@
   (map
    (partial assoc {:name (name tile-name)} :value)
    c)))
-
-; Should probably convert this to a smart regex match sometime... Also this is not needed in the core lib.
-(defn guess-tile
- [input]
- (let [n (cond
-             (and
-              (s/includes? input "bam")
-              (not (s/includes? input "flo"))) "bamboo"
-             (s/includes? input "cha") "character"
-             (s/includes? input "dot") "dot"
-             (s/includes? input "dra") "dragon"
-             (s/includes? input "win") "wind"
-             (s/includes? input "sea") "season"
-             (s/includes? input "flo") "flower")
-       v (cond
-              (s/includes? input "1") 1
-              (s/includes? input "2") 2
-              (s/includes? input "3") 3
-              (s/includes? input "4") 4
-              (s/includes? input "5") 5
-              (s/includes? input "6") 6
-              (s/includes? input "7") 7
-              (s/includes? input "8") 8
-              (s/includes? input "9") 9
-              (s/includes? input "red") "red"
-              (s/includes? input "gre") "gre"
-              (s/includes? input "whi") "white"
-              (s/includes? input "eas") "east"
-              (s/includes? input "nor") "north"
-              (s/includes? input "sou") "south"
-              (s/includes? input "wes") "west"
-              (s/includes? input "spr") "spring"
-              (s/includes? input "sum") "summer"
-              (s/includes? input "aut") "autumn"
-              (s/includes? input "win") "winter"
-              (s/includes? input "plu") "plumb"
-              (s/includes? input "orc") "orchyd"
-              (s/includes? input "chr") "chrysantemum"
-              (and
-               (s/includes? input "ba")
-               (s/includes? input "fl")) "bamboo")]
-  (when (not (or (nil? n) (nil? v)))
-        (let [t {:name n :value v}
-              all-tiles (tiles n)]
-         (first (filter (partial = t) all-tiles))))))
 
 ; new-wall [] => Returns a shuffled collection of tiles, representing a wall of Mahjong-tiles.
 (defn new-wall
