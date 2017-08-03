@@ -1,14 +1,33 @@
 (ns mahjong-engine.core
  (:require [clojure.string :as s]))
 
-; TODO: Split implementation of tiles to suits (bamboos, dots & signs) and bonus (winds, dragins, seasons, flowers). Each tile has a name and a value.
-; Functions concerned: make-get-suit-fn, make-get-rank-fn, make-same-suit-fn, tiles and the tile-definitions map
-; TODO: Implement a fn that returns all the close tiles in hand (same suit, within chow range for standard suits)
-; TODO: Implement a scoring system & notion of chows, pungs and kongs.
+; TODO: Implement a scoring system & notion of chows.
 ; TODO: Implement generic interaction functions (inform / prompt) for ui
 ; TODO: Implement claiming of a discarded tile => Reveal a set
 ; TODO: Implement the execution of a round
 ; TODO: Separate functions into different namespaces/files
+
+(defn matching?
+ "Returns true if all the items in coll match up. e.g. (matching? '(1 1)) => true."
+ [coll] (apply = coll))
+
+(defn is-matching-set?
+ "Returns true if exactly n matching items are given. e.g. (is-matching-set? '(1 1 1 1 1) 5) => true"
+ [tiles n]
+ (if (= (count tiles) n)
+  (matching? tiles)
+  false))
+
+(defn is-kong?
+ "Returns true if exactly 4 matching items are given. (is-kong? 1 1 1 1) => true."
+ [& tiles]
+ (is-matching-set? tiles 4))
+
+(defn is-pung?
+ "Returns true if exactly 3 matching items are given. (is-pung? 1 1 1) => true."
+ [& tiles]
+ (is-matching-set? tiles 3))
+
 
 ; Sorting tiles by name first, and value second.
 (def sort-tiles (partial sort-by (juxt :name :value)))
