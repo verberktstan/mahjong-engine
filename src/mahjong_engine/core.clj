@@ -1,62 +1,12 @@
 (ns mahjong-engine.core
- (:require [clojure.string :as s]))
+ (:require [mahjong-engine.tiles :refer :all]
+  [mahjong-engine.special-moves :refer :all]))
 
 ; TODO: Implement a scoring system & notion of chows.
 ; TODO: Implement generic interaction functions (inform / prompt) for ui
 ; TODO: Implement claiming of a discarded tile => Reveal a set
 ; TODO: Implement the execution of a round
-; TODO: Separate functions into different namespaces/files
 
-(defn matching?
- "Returns true if all the items in coll match up. e.g. (matching? '(1 1)) => true."
- [coll] (apply = coll))
-
-(defn is-matching-set?
- "Returns true if exactly n matching items are given. e.g. (is-matching-set? '(1 1 1 1 1) 5) => true"
- [tiles n]
- (if (= (count tiles) n)
-  (matching? tiles)
-  false))
-
-(defn is-kong?
- "Returns true if exactly 4 matching items are given. (is-kong? 1 1 1 1) => true."
- [& tiles]
- (is-matching-set? tiles 4))
-
-(defn is-pung?
- "Returns true if exactly 3 matching items are given. (is-pung? 1 1 1) => true."
- [& tiles]
- (is-matching-set? tiles 3))
-
-
-; Sorting tiles by name first, and value second.
-(def sort-tiles (partial sort-by (juxt :name :value)))
-
-; tiles [] => Returns a collection of all base-tiles of the mahjong game. A tile is represented by a 2-char keyword, the first char describes the suit (b for bamboo, w for wind f.e.) and the second char describes the rank (1 for one, n for north f.e.)
-(defn tiles
- "Returns a collection of tiles with name tile-name. (tile-name :bamboo) => list of all bamboos etc."
- [tile-name]
- (let [c (get {:dragon ["green" "red" "white"]
-               :wind ["east" "north" "south" "west"]
-               :season ["spring" "summer" "autumn" "fall"]
-               :flower ["bamboo" "chrysantemum" "orchid" "plumb"]}
-          (keyword tile-name)
-          (range 1 10))]
-  (map
-   (partial assoc {:name (name tile-name)} :value)
-   c)))
-
-; new-wall [] => Returns a shuffled collection of tiles, representing a wall of Mahjong-tiles.
-(defn new-wall
- "Returns a shuffled collection of tiles, representing a wall of Mahjong tiles."
- []
- (let [all-single-tiles (reduce concat (map tiles [:bamboo :character :dot :dragon :wind]))
-       bonus-tiles (reduce concat (map tiles [:season :flower]))]
-  (shuffle (concat
-            (reduce concat (repeat 4 all-single-tiles)) ; Repeat suited tiles 4 times
-            bonus-tiles)))) ; Bonus tiles not repeated
-
-; make-players [] => Returns a collection of maps representing players. It contains a name, a hand and revealed (sets).
 (defn new-players
  "Retuns a collection of maps representing players."
  []
